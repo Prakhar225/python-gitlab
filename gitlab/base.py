@@ -20,11 +20,12 @@ import pprint
 import textwrap
 from dataclasses import dataclass
 from types import ModuleType
-from typing import Any, Dict, Iterable, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
 
 import gitlab
 from gitlab import types as g_types
 from gitlab.exceptions import GitlabParsingError
+from gitlab.types import F
 
 from .client import Gitlab, GitlabList
 
@@ -321,6 +322,21 @@ class RESTObjectList:
 class RequiredOptional:
     required: Tuple[str, ...] = ()
     optional: Tuple[str, ...] = ()
+
+
+def custom_attrs(required: tuple = (), optional: tuple = ()) -> Callable[[F], F]:
+    """Decorates a custom method to add a RequiredOptional attribute.
+
+    Args:
+        required: A tuple of API attributes required in the custom method
+        optional: A tuple of API attributes optional in the custom method
+    """
+
+    def decorator(func: F) -> F:
+        setattr(func, "_custom_attrs", RequiredOptional(required, optional))
+        return func
+
+    return decorator
 
 
 class RESTManager:

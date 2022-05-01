@@ -2,7 +2,7 @@ from typing import Any, cast, Dict, Union
 
 import requests
 
-from gitlab import cli
+from gitlab import base, cli
 from gitlab import exceptions as exc
 from gitlab.base import RequiredOptional, RESTManager, RESTObject
 from gitlab.mixins import CRUDMixin, ListMixin, ObjectDeleteMixin, SaveMixin
@@ -35,7 +35,8 @@ class ProjectKeyManager(CRUDMixin, RESTManager):
     _create_attrs = RequiredOptional(required=("title", "key"), optional=("can_push",))
     _update_attrs = RequiredOptional(optional=("title", "can_push"))
 
-    @cli.register_custom_action("ProjectKeyManager", ("key_id",))
+    @cli.register_custom_action("ProjectKeyManager")
+    @base.custom_attrs(required=("key_id",))
     @exc.on_http_error(exc.GitlabProjectDeployKeyError)
     def enable(
         self, key_id: int, **kwargs: Any
