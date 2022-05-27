@@ -384,6 +384,8 @@ class ProjectMergeRequest(
             data["should_remove_source_branch"] = should_remove_source_branch
         if merge_when_pipeline_succeeds is not None:
             data["merge_when_pipeline_succeeds"] = merge_when_pipeline_succeeds
+        
+        data.update(kwargs)
 
         server_data = self.manager.gitlab.http_put(path, post_data=data, **kwargs)
         if TYPE_CHECKING:
